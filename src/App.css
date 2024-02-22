@@ -1,38 +1,134 @@
-.App {
-  text-align: center;
+#calendar {
+    margin-top: 20px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.85em;
+    /* Adjust the base font size */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.fc .fc-toolbar-title {
+    font-size: 1.2em;
+    /* Adjust the title font size */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.fc .fc-button {
+    font-size: 0.8em;
+    /* Adjust the button font size */
+    padding: 6px 10px;
+    /* Adjust button padding if necessary */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.fc .fc-daygrid-day-number {
+    font-size: 0.9em;
+    /* Adjust the day number font size */
 }
 
-.App-link {
-  color: #61dafb;
+.fc .fc-event-title {
+    font-size: 0.9em;
+    /* Adjust the event title font size */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    /* 여백 증가 */
+}
+
+.form-row {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-input,
+.form-select {
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    width: 50%;
+    /* 폼 요소 너비 조절 */
+    box-sizing: border-box;
+    /* 패딩을 포함한 너비로 설정 */
+}
+
+
+.custom-file-input {
+    display: none;
+}
+
+.form-button,
+.file-input-label {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.form-button:hover,
+.file-input-label:hover {
+    background-color: #0056b3;
+}
+
+/* 추가 스타일링 */
+
+.form-select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.form-select:hover {
+    border-color: #007bff;
+    /* 선택 메뉴 호버 효과 */
+}
+
+.form-button,
+.file-input-label {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Adds space between form rows */
+}
+
+.form-row {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* Adds space between inputs and button */
+    align-items: center;
+}
+
+.form-input {
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
