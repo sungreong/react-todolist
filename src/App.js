@@ -1,12 +1,103 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,Component } from 'react';
 import './App.css'; // CSS 파일 import
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction'; // 이벤트 클릭 처리를 위해 추가
+import Chart from 'react-google-charts';
+
+// 간트 차트 데이터의 헤더
+const ganttChartHeader = [
+  { type: 'string', label: 'Task ID' },
+  { type: 'string', label: 'Task Name' },
+  { type: "string", label: "Resource" },
+  { type: 'date', label: 'Start Date' },
+  { type: 'date', label: 'End Date' },
+  { type: 'number', label: 'Duration' },
+  { type: 'number', label: 'Percent Complete' },
+  { type: 'string', label: 'Dependencies' },
+];
+
+const TodosGaugeCharts = ({ tasks }) => {
+  const options = {
+    width: 400, height: 120,
+    redFrom: 0, redTo: 25,
+    yellowFrom: 25, yellowTo: 50,
+    greenFrom: 50, greenTo: 100,
+    minorTicks: 5,
+  };
+
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'row', // 가로 방향으로 배열
+      flexWrap: 'wrap', // 내용이 넘칠 경우 다음 줄로 이동
+      justifyContent: 'center', // 세로 방향 중앙 정렬
+      height: '100vh', // 뷰포트 높이를 100%로 설정
+    }}>
+      {tasks.map((todo, index) => {
+        const remainingPercentage = todo.percentage;
+        return (
+          <div key={index} style={{
+            flex: 1, // flex 항목으로 만들어 균등 분포
+            minWidth: '300px', // 최소 너비 설정
+            display: 'flex',
+            flexDirection: 'column', // 항목 내부는 세로 방향으로 배열
+            padding: '10px', // 패딩 추가
+          }}>
+            <h4>{todo.task}</h4>
+            <Chart
+              chartType="Gauge"
+              width="100%"
+              height="400px"
+              data={[['Label', 'Value'], ['Remaining', remainingPercentage]]}
+              options={options}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+class MyGanttChart extends Component {
+  render() {
+    // props로부터 tasks를 받아옵니다.
+    const { tasks } = this.props;
+
+    // tasks를 간트 차트 데이터로 변환
+    const ganttChartData = [
+      ganttChartHeader,
+      ...tasks.map((task, index) => ([
+        `${task.task}-${index}`, // Task ID, 고유하게 만들기 위해 index를 추가
+        task.task, // Task Name
+        task.resource_content, // Resource
+        new Date(task.startTime), // Start Date
+        new Date(task.endTime), // End Date
+        null, // Duration은 Google Gantt Chart에서 자동 계산됨
+        task.percentage, // Percent Complete
+        null, // Dependencies
+      ])),
+    ];
+
+    return (
+        <Chart
+          width={'100%'}
+          height={'400px'}
+          chartType="Gantt"
+          loader={<div>Loading Chart</div>}
+          data={ganttChartData}
+          rootProps={{ 'data-testid': '2' }}
+        />
+    );
+  }
+}
+
 
 function App() {
   const [toDo, setToDo] = React.useState("");
   const [content, setContent] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
+  const [resource_content, setResoucrContent] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
+
   const [toDos, setToDos] = React.useState([]);
   const [dueDate, setDueDate] = React.useState("");
   const [minutesToAdd, setMinutesToAdd] = React.useState('');
@@ -18,9 +109,14 @@ function App() {
   const toggleContentVisibility = () => setIsContentVisible(!isContentVisible); // Toggle visibility
   const [isToDoVisible, setToDoVisible] = React.useState(false); // State for textarea visibility
   const toggleToDoVisibility = () => setToDoVisible(!isToDoVisible); // Toggle visibility
+  const [viewType, setViewType] = useState('calendar'); // 'calendar' 또는 'gantt'를 저장하는 상태
 
+  const handleViewTypeChange = (e) => {
+    setViewType(e.target.value);
+  };
 
   const onChangeContent = (e) => setContent(e.target.value); // 상세 내용 입력 처리
+  const onChangeResourceContent = (e) => setResoucrContent(e.target.value); // 상세 내용 입력 처리
 
   // React.useEffect(() => {
   //   const calendarEl = document.getElementById('calendar');
@@ -81,14 +177,23 @@ function App() {
       hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false, timeZoneName: 'short'
     };
-    const formattedDateTime = new Intl.DateTimeFormat('en-US', options).format(now);
+    let formattedDateTime = new Intl.DateTimeFormat('en-US', options).format(now);
 
     // 포맷팅된 문자열에서 날짜와 시간을 추출합니다.
     const [datePart, timePart] = formattedDateTime.split(', ');
     const [month, day, year] = datePart.split('/');
     const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    const formattedTime = timePart.slice(0, 5);
-
+    let formattedTime = timePart.slice(0, 5);
+    let hours = parseInt(formattedTime.split(':')[0], 10);
+    const minutesPart = formattedTime.split(':')[1];
+  
+    // "24:XX" 시간 처리
+    if (hours === 24) {
+      hours = 0; // 시간을 "00"으로 설정
+      formattedTime = `${hours.toString().padStart(2, '0')}:${minutesPart}`;
+    }
+    console.log(now.toISOString());
+    console.log(`${formattedDate}T${formattedTime}`);
     // 'YYYY-MM-DDTHH:mm' 형식으로 결합하여 반환합니다.
     return `${formattedDate}T${formattedTime}`;
   };
@@ -117,6 +222,7 @@ function App() {
     const newTask = {
       task: toDo,
       dueDate,
+      resource_content: resource_content, // 할 일에 상세 내용 추가
       content: content, // 할 일에 상세 내용 추가
       startTime: now.toISOString(),
       endTime: dueDate,
@@ -126,6 +232,7 @@ function App() {
     setToDos(currentArray => [newTask, ...currentArray]);
     setToDo("");
     setDueDate("");
+    setResoucrContent("");
   }
   const toggleCompleted = (index) => {
     setToDos((currentToDos) =>
@@ -287,6 +394,13 @@ function App() {
           )}
           {isContentVisible && ( // Conditional rendering based on state
             <div className="form-row">
+              <input
+              className="form-input"
+              value={resource_content}
+              onChange={onChangeResourceContent}
+              type="text"
+              placeholder="Write your TAGS"
+            />
               <textarea
                 className="form-input"
                 value={content}
@@ -371,8 +485,13 @@ function App() {
         </div>
       ))
       }
-
+      <select onChange={handleViewTypeChange} value={viewType}>
+          <option value="calendar">Calendar</option>
+          <option value="gantt">Gantt Chart</option>
+          <option value="gauge">Gauge Chart</option>
+      </select>
       <div style={{ display: "flex", flexDirection: "row" }}>
+        {viewType === 'calendar' ? (
         <div style={{ flex: 7, marginRight: "20px" }}>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -398,6 +517,11 @@ function App() {
             }}
           />
         </div>
+        ) : viewType === 'gantt' ? (
+          <MyGanttChart tasks={toDos} />
+        ) : viewType === 'gauge' ? (
+          <TodosGaugeCharts tasks={toDos} />
+        ) : null}
         <div style={{ flex: 3 }}>
           {selectedEvent && (
             <div>
@@ -407,11 +531,12 @@ function App() {
               <p><strong>End:</strong> {selectedEvent.end}</p>
               <p><strong>Content:</strong> {selectedEvent.content}</p>
             </div>
-          )}
+          )
+          
+          
+          }
         </div>
       </div>
-
-
     </div >
   );
 }
