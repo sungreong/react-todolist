@@ -19,7 +19,7 @@ const ganttChartHeader = [
 
 const TodosGaugeCharts = ({ tasks }) => {
   const options = {
-    width: 400, height: 120,
+    width: 100, height: 120,
     redFrom: 0, redTo: 25,
     yellowFrom: 25, yellowTo: 50,
     greenFrom: 50, greenTo: 100,
@@ -39,7 +39,7 @@ const TodosGaugeCharts = ({ tasks }) => {
         return (
           <div key={index} style={{
             flex: 1, // flex 항목으로 만들어 균등 분포
-            minWidth: '300px', // 최소 너비 설정
+            minWidth: '100px', // 최소 너비 설정
             display: 'flex',
             flexDirection: 'column', // 항목 내부는 세로 방향으로 배열
             padding: '10px', // 패딩 추가
