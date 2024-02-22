@@ -383,69 +383,73 @@ function App() {
               type="datetime-local"
             />
 
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
+              <button className="form-button" onClick={toggleContentVisibility} type="button">
+                {isContentVisible ? 'Hide Details' : 'Add Details'} {/* Toggle button text */}
+              </button>
 
-            <button className="form-button" onClick={toggleContentVisibility} type="button">
-              {isContentVisible ? 'Hide Details' : 'Add Details'} {/* Toggle button text */}
-            </button>
+              <button type="button" className="form-button" onClick={toggleMinuteOptions}>
+                {showMinuteOptions ? 'Hide Options' : 'Add Minutes'}
+              </button>
 
-            <button type="button" className="form-button" onClick={toggleMinuteOptions}>
-              {showMinuteOptions ? 'Hide Options' : 'Add Minutes'}
-            </button>
-
-            <button className="form-button" type="submit">Add To Do</button>
-          </div>
-          {showMinuteOptions && (
-            <div className="form-row options-row">
-              <input
-                className="form-input"
-                value={minutesToAdd}
-                onChange={onMinutesChange}
-                type="number"
-                placeholder="Custom minutes"
-              />
-              <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(10)}>+10m</button>
-              <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(20)}>+20m</button>
-              <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(30)}>+30m</button>
-              <button type="button" className="form-button" onClick={handleAddCustomMinutes}>Add</button>
+              <button className="form-button" type="submit">Add To Do</button>
             </div>
-          )}
-          {isContentVisible && ( // Conditional rendering based on state
+            {isContentVisible && ( // Conditional rendering based on state
             <div className="form-row">
               <div style={{ display: 'flex', width: '100%' }}>
-            <input
-              className="form-input"
-              style={{ flex: 1, marginRight: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 오른쪽 여백 추가
-              value={resource_content}
-              onChange={onChangeResourceContent}
-              type="text"
-              placeholder="Write your Task Tags(Optional)"
-            />
-            <input 
-              className="form-input"
-              style={{ flex: 1, margin: '0 1%', boxSizing: 'border-box' }} // 양쪽 여백 추가
-              value={task_id}
-              onChange={onChangeTaskId}
-              type="text"
-              placeholder="Write your Task ID(Optional)"
-            />
-            <input
-              className="form-input"
-              style={{ flex: 1, marginLeft: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 왼쪽 여백 추가
-              value={dependencies}
-              onChange={onChangeDependencies}
-              type="text"
-              placeholder="Write your Dependencies(Optional)"
-            />
-          </div>
-              <textarea
+              <input
                 className="form-input"
-                value={content}
-                onChange={onChangeContent}
-                placeholder="Add more details"
-                style={{ resize: "none", height: "100px" }}
-              ></textarea>
-            </div>
-          )}
+                style={{ flex: 1, marginRight: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 오른쪽 여백 추가
+                value={resource_content}
+                onChange={onChangeResourceContent}
+                type="text"
+                placeholder="Write your Task Tags(Optional)"
+              />
+              <input 
+                className="form-input"
+                style={{ flex: 1, margin: '0 1%', boxSizing: 'border-box' }} // 양쪽 여백 추가
+                value={task_id}
+                onChange={onChangeTaskId}
+                type="text"
+                placeholder="Write your Task ID(Optional)"
+              />
+              <input
+                className="form-input"
+                style={{ flex: 1, marginLeft: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 왼쪽 여백 추가
+                value={dependencies}
+                onChange={onChangeDependencies}
+                type="text"
+                placeholder="Write your Dependencies(Optional)"
+              />
+              </div>
+                <textarea
+                  className="form-input"
+                  value={content}
+                  onChange={onChangeContent}
+                  placeholder="Add more details"
+                  style={{ resize: "none", height: "100px" }}
+                ></textarea>
+              </div>
+            )}
+              
+            {showMinuteOptions && (
+              <div className="form-row options-row">
+                <input
+                  className="form-input"
+                  value={minutesToAdd}
+                  onChange={onMinutesChange}
+                  type="number"
+                  placeholder="Custom minutes"
+                />
+                <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(10)}>+10m</button>
+                <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(20)}>+20m</button>
+                <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(30)}>+30m</button>
+                <button type="button" className="form-button" onClick={handleAddCustomMinutes}>Add</button>
+              </div>
+            )}
+            
+          </div>
+          
 
         </form>
       )}
