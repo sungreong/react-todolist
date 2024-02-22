@@ -411,27 +411,32 @@ function App() {
           )}
           {isContentVisible && ( // Conditional rendering based on state
             <div className="form-row">
-              <input
+              <div style={{ display: 'flex', width: '100%' }}>
+            <input
               className="form-input"
+              style={{ flex: 1, marginRight: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 오른쪽 여백 추가
               value={resource_content}
               onChange={onChangeResourceContent}
               type="text"
-              placeholder="Write your TAGS"
+              placeholder="Write your Task Tags(Optional)"
             />
             <input 
               className="form-input"
+              style={{ flex: 1, margin: '0 1%', boxSizing: 'border-box' }} // 양쪽 여백 추가
               value={task_id}
               onChange={onChangeTaskId}
               type="text"
-              placeholder="Write your Task ID"
+              placeholder="Write your Task ID(Optional)"
             />
             <input
               className="form-input"
+              style={{ flex: 1, marginLeft: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 왼쪽 여백 추가
               value={dependencies}
               onChange={onChangeDependencies}
               type="text"
-              placeholder="Write your Dependencies"
+              placeholder="Write your Dependencies(Optional)"
             />
+          </div>
               <textarea
                 className="form-input"
                 value={content}
