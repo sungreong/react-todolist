@@ -68,25 +68,37 @@ class MyGanttChart extends Component {
     const ganttChartData = [
       ganttChartHeader,
       ...tasks.map((task, index) => ([
-        `${task.task}-${index}`, // Task ID, 고유하게 만들기 위해 index를 추가
+        task.task_id !== "" ? task.task_id : `${task.task}-${index}`,
         task.task, // Task Name
         task.resource_content, // Resource
         new Date(task.startTime), // Start Date
         new Date(task.endTime), // End Date
         null, // Duration은 Google Gantt Chart에서 자동 계산됨
         task.percentage, // Percent Complete
-        null, // Dependencies
+        null,
+        // task.dependencies !== "" ? task.dependencies : null,
       ])),
     ];
 
+    // const earliestDate = tasks.reduce((earliest, task) => {
+    //   const taskDate = new Date(task.startTime);
+    //   return earliest < taskDate ? earliest : taskDate;
+    // }, new Date(tasks[0].startTime));
+    
+    const options = {
+      height: 300,
+      // gantt: {
+      //   defaultStartDateMillis: earliestDate,
+      // },
+    };
     return (
         <Chart
           width={'100%'}
-          height={'400px'}
+          // height={'100px'}
           chartType="Gantt"
           loader={<div>Loading Chart</div>}
           data={ganttChartData}
-          rootProps={{ 'data-testid': '2' }}
+          options={options}
         />
     );
   }
@@ -97,7 +109,8 @@ function App() {
   const [toDo, setToDo] = React.useState("");
   const [content, setContent] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
   const [resource_content, setResoucrContent] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
-
+  const [task_id, setTaskId] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
+  const [dependencies, setDependencies] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
   const [toDos, setToDos] = React.useState([]);
   const [dueDate, setDueDate] = React.useState("");
   const [minutesToAdd, setMinutesToAdd] = React.useState('');
@@ -117,6 +130,8 @@ function App() {
 
   const onChangeContent = (e) => setContent(e.target.value); // 상세 내용 입력 처리
   const onChangeResourceContent = (e) => setResoucrContent(e.target.value); // 상세 내용 입력 처리
+  const onChangeTaskId = (e) => setTaskId(e.target.value); // 상세 내용 입력 처리
+  const onChangeDependencies = (e) => setDependencies(e.target.value); // 상세 내용 입력 처리
 
   // React.useEffect(() => {
   //   const calendarEl = document.getElementById('calendar');
@@ -221,6 +236,8 @@ function App() {
     const now = new Date();
     const newTask = {
       task: toDo,
+      task_id: task_id,
+      dependencies: dependencies,
       dueDate,
       resource_content: resource_content, // 할 일에 상세 내용 추가
       content: content, // 할 일에 상세 내용 추가
@@ -400,6 +417,20 @@ function App() {
               onChange={onChangeResourceContent}
               type="text"
               placeholder="Write your TAGS"
+            />
+            <input 
+              className="form-input"
+              value={task_id}
+              onChange={onChangeTaskId}
+              type="text"
+              placeholder="Write your Task ID"
+            />
+            <input
+              className="form-input"
+              value={dependencies}
+              onChange={onChangeDependencies}
+              type="text"
+              placeholder="Write your Dependencies"
             />
               <textarea
                 className="form-input"
