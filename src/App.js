@@ -185,6 +185,21 @@ function App() {
   const onMinutesChange = (e) => {
     setMinutesToAdd(e.target.value);
   };
+
+  const setCertainTime = (HHMM) => {
+    const now = new Date(); // 현재 시간을 가져옵니다.
+    // Intl.DateTimeFormat을 사용하여 로컬 시간대의 날짜와 시간을 포맷팅합니다.
+    const options = {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false, timeZoneName: 'short'
+    };
+    let formattedDateTime = new Intl.DateTimeFormat('en-US', options).format(now);
+    const [datePart, timePart] = formattedDateTime.split(', ');
+    const [month, day, year] = datePart.split('/');
+    const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    return `${formattedDate}T${HHMM}`;
+  }
   const addMinutesToDate = (minutes) => {
     const now = new Date(); // 현재 시간을 가져옵니다.
     now.setMinutes(now.getMinutes() + minutes); // 현재 시간에 분을 더합니다.
@@ -225,6 +240,10 @@ function App() {
   const handleQuickAddMinutes = (minutes) => {
     setDueDate(addMinutesToDate(minutes));
   };
+  const handleQuickTime = (HHMM) =>  {
+    setDueDate(setCertainTime(HHMM))
+  }
+
 
   const handleAddCustomMinutes = () => {
     if (minutesToAdd) {
@@ -482,6 +501,8 @@ function App() {
                 <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(10)}>+10m</button>
                 <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(20)}>+20m</button>
                 <button type="button" className="form-button" onClick={() => handleQuickAddMinutes(30)}>+30m</button>
+                <button type="button" className="form-button" onClick={() => handleQuickTime("18:00")}>퇴근시간(18:00)</button>
+                <button type="button" className="form-button" onClick={() => handleQuickTime("11:30")}>점심시간(11:30)</button>
                 <button type="button" className="form-button" onClick={handleAddCustomMinutes}>Add</button>
               </div>
             )}
