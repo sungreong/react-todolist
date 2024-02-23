@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction'; // 이벤트 클릭 처리를 위해 추가
 import Chart from 'react-google-charts';
+import { startOfDay } from '@fullcalendar/core/internal';
 
 // 간트 차트 데이터의 헤더
 const ganttChartHeader = [
@@ -113,6 +114,7 @@ function App() {
   const [dependencies, setDependencies] = React.useState(""); // 할 일의 상세 내용을 저장할 상태
   const [toDos, setToDos] = React.useState([]);
   const [dueDate, setDueDate] = React.useState("");
+  const [startDate, setStartDueDate] = React.useState("");
   const [minutesToAdd, setMinutesToAdd] = React.useState('');
   const [showMinuteOptions, setShowMinuteOptions] = React.useState(false);
   // 
@@ -177,6 +179,8 @@ function App() {
 
   const onChange = (e) => setToDo(e.target.value);
   const onDateChange = (e) => setDueDate(e.target.value);
+  const onStartDateChange = (e) => setStartDueDate(e.target.value);
+
 
   const onMinutesChange = (e) => {
     setMinutesToAdd(e.target.value);
@@ -233,7 +237,7 @@ function App() {
     if (toDo === "" || dueDate === "") {
       return;
     }
-    const now = new Date();
+    const effectiveStartDate = startDate || new Date().toISOString();
     const newTask = {
       task: toDo,
       task_id: task_id,
@@ -241,7 +245,8 @@ function App() {
       dueDate,
       resource_content: resource_content, // 할 일에 상세 내용 추가
       content: content, // 할 일에 상세 내용 추가
-      startTime: now.toISOString(),
+      startTime:  effectiveStartDate,
+      // now.toISOString(),
       endTime: dueDate,
       isCompleted: false,
       percentage: 0
@@ -250,6 +255,7 @@ function App() {
     setToDo("");
     setDueDate("");
     setResoucrContent("");
+    setStartDueDate("")
   }
   const toggleCompleted = (index) => {
     setToDos((currentToDos) =>
@@ -369,8 +375,11 @@ function App() {
       {isToDoVisible && ( // Conditional rendering based on state}
         <form onSubmit={onSubmit} className="form-container">
           <div className="form-row">
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
             <input
               className="form-input"
+              style={{ flex: 7, padding: 10, marginRight: '10px' }} // Add marginRight for spacing between inputs
+
               value={toDo}
               onChange={onChange}
               type="text"
@@ -378,10 +387,13 @@ function App() {
             />
             <input
               className="form-input"
+              style={{ flex: 3, padding: 10, marginRight: '10px' }} // Add marginRight for spacing between inputs
+
               value={dueDate}
               onChange={onDateChange}
               type="datetime-local"
             />
+          </div>
 
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%'}}>
               <button className="form-button" onClick={toggleContentVisibility} type="button">
@@ -397,30 +409,56 @@ function App() {
             {isContentVisible && ( // Conditional rendering based on state
             <div className="form-row">
               <div style={{ display: 'flex', width: '100%' }}>
-              <input
-                className="form-input"
-                style={{ flex: 1, marginRight: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 오른쪽 여백 추가
-                value={resource_content}
-                onChange={onChangeResourceContent}
-                type="text"
-                placeholder="Write your Task Tags(Optional)"
-              />
-              <input 
-                className="form-input"
-                style={{ flex: 1, margin: '0 1%', boxSizing: 'border-box' }} // 양쪽 여백 추가
-                value={task_id}
-                onChange={onChangeTaskId}
-                type="text"
-                placeholder="Write your Task ID(Optional)"
-              />
-              <input
-                className="form-input"
-                style={{ flex: 1, marginLeft: '1%', boxSizing: 'border-box' }} // 마지막 요소를 제외한 왼쪽 여백 추가
-                value={dependencies}
-                onChange={onChangeDependencies}
-                type="text"
-                placeholder="Write your Dependencies(Optional)"
-              />
+                {/* Task Tags Input */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginRight: '1%' }}>
+                  <p>Task Tags (Optional).</p>
+                  <input
+                    className="form-input"
+                    style={{ boxSizing: 'border-box' }}
+                    value={resource_content}
+                    onChange={onChangeResourceContent}
+                    type="text"
+                    placeholder="Write your Task Tags(Optional)"
+                  />
+                </div>  
+
+                {/* Task ID Input - Adjust accordingly */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, margin: '0 1%' }}>
+                  <p>Task ID (Optional)</p>
+                  <input 
+                    className="form-input"
+                    style={{ boxSizing: 'border-box' }}
+                    value={task_id}
+                    onChange={onChangeTaskId}
+                    type="text"
+                    placeholder="Write your Task ID(Optional)"
+                  />
+                </div>
+
+                {/* Dependencies Input - Adjust accordingly */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginLeft: '1%' }}>
+                  <p>Task 의존성 (Optional)</p>
+                  <input
+                    className="form-input"
+                    style={{ boxSizing: 'border-box' }}
+                    value={dependencies}
+                    onChange={onChangeDependencies}
+                    type="text"
+                    placeholder="Write your Dependencies(Optional)"
+                  />
+                </div>
+
+                {/* Start Date Input - Adjust accordingly */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginLeft: '1%' }}>
+                  <p>시작 날짜와 (Optional)</p>
+                  <input
+                    className="form-input"
+                    style={{ boxSizing: 'border-box' }}
+                    value={startDate}
+                    onChange={onStartDateChange}
+                    type="datetime-local"
+                  />
+                </div>
               </div>
                 <textarea
                   className="form-input"
